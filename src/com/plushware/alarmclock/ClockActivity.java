@@ -15,6 +15,7 @@ public class ClockActivity extends Activity {
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 	private static final boolean TOGGLE_ON_CLICK = true;
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+	private static final int TIME_REFRESH_MILLIS = 30 * 1000;
 	
 	private SystemUiHider mSystemUiHider;
 	private RepeatingRunner mRefreshTimeRunner;
@@ -52,7 +53,7 @@ public class ClockActivity extends Activity {
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		mTimeView = (TextView) findViewById(R.id.fullscreen_content);
 		
-		mRefreshTimeRunner = new RepeatingRunner(mRefreshTimeRunnable, 5000);
+		mRefreshTimeRunner = new RepeatingRunner(mRefreshTimeRunnable, TIME_REFRESH_MILLIS);
 		mRefreshTimeRunnable.run();
 
 		mSystemUiHider = SystemUiHider.getInstance(this, mTimeView, HIDER_FLAGS);
