@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ public class ClockActivity extends Activity {
 	
 	private Runnable mRefreshTimeRunnable = new Runnable() {
 		public void run() {
+			Log.i("ClockActivity", "Refresh time.");
+			
 			Time currentTime = new Time();        
 			currentTime.setToNow();
 			
