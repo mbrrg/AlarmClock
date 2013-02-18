@@ -1,0 +1,6 @@
+[submodule "lib"]
+	path = lib
+	url = git://github.com/commonsguy/cwac-wakeful.git
+[submodule "lib/cwac-wakeful"]
+	path = lib/cwac-wakeful
+	url = git://github.com/commonsguy/cwac-wakeful.git
