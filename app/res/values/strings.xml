@@ -3,5 +3,8 @@
 
     <string name="app_name">Alarm Clock</string>
     <string name="set_alarms_button">Set Alarms</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
 
 </resources>
