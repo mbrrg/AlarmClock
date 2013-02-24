@@ -1,50 +1,28 @@
 package com.plushware.alarmclock;
 
-import com.plushware.alarmclock.util.SystemUiHider;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 public class ClockActivity extends Activity {
-	private static final boolean AUTO_HIDE = true;
-	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-	private static final boolean TOGGLE_ON_CLICK = true;
-	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-	private static final int TIME_REFRESH_MILLIS = 30 * 1000;
-	
-	private SystemUiHider mSystemUiHider;
-	private RepeatingRunner mRefreshTimeRunner;
-	private TextView mTimeView;
-	
-	private Runnable mRefreshTimeRunnable = new Runnable() {
-		public void run() {
-			Log.i("ClockActivity", "Refresh time.");
-			
-			Time currentTime = new Time();        
-			currentTime.setToNow();
-			
-			mTimeView.setText(currentTime.format("%H:%M"));    	    	    	   
-		}
-	};
+	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;	
+		
+	private TimeTextView mTimeView;		
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		mRefreshTimeRunner.pause();
+		mTimeView.pause();
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
-		mRefreshTimeRunner.resume();
+		mTimeView.resume();
 	}
 
 	@Override
@@ -54,67 +32,35 @@ public class ClockActivity extends Activity {
 		setContentView(R.layout.activity_clock);
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		mTimeView = (TextView) findViewById(R.id.fullscreen_content);
+		mTimeView = (TimeTextView) findViewById(R.id.fullscreen_content);
 		
-		mRefreshTimeRunner = new RepeatingRunner(mRefreshTimeRunnable, TIME_REFRESH_MILLIS);
-		mRefreshTimeRunnable.run();
-
-		mSystemUiHider = SystemUiHider.getInstance(this, mTimeView, HIDER_FLAGS);
-		mSystemUiHider.setup();
-		mSystemUiHider
-				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-					// Cached values.
-					int mControlsHeight;
-					int mShortAnimTime;
-
-					@Override
-					public void onVisibilityChange(boolean visible) {
-						if (mControlsHeight == 0) {
-							mControlsHeight = controlsView.getHeight();
-						}
-						if (mShortAnimTime == 0) {
-							mShortAnimTime = getResources().getInteger(
-									android.R.integer.config_shortAnimTime);
-						}
-						controlsView
-								.animate()
-								.translationY(visible ? 0 : mControlsHeight)
-								.setDuration(mShortAnimTime);
-
-						if (visible && AUTO_HIDE) {
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
-						}
-					}
-				});
-
-		mTimeView.setOnClickListener(new View.OnClickListener() {
+		mTimeView.setOnTouchListener(new View.OnTouchListener() {
+			
 			@Override
-			public void onClick(View view) {
-				if (TOGGLE_ON_CLICK) {
-					mSystemUiHider.toggle();
-				} else {
-					mSystemUiHider.show();
-				}
+			public boolean onTouch(View v, MotionEvent event) {
+				controlsView.setVisibility(View.VISIBLE);
+				
+				delayedHide(3000);
+
+				return false;
 			}
 		});
-
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
+		
+		findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 
-		delayedHide(100);
+		//delayedHide(100);
 	}
 
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View view, MotionEvent motionEvent) {
-			if (AUTO_HIDE) {
-				delayedHide(AUTO_HIDE_DELAY_MILLIS);
-			}
+			delayedHide(AUTO_HIDE_DELAY_MILLIS);
+
 			return false;
 		}
 	};
@@ -123,7 +69,7 @@ public class ClockActivity extends Activity {
 	Runnable mHideRunnable = new Runnable() {
 		@Override
 		public void run() {
-			mSystemUiHider.hide();
+			findViewById(R.id.fullscreen_content_controls).setVisibility(View.GONE);
 		}
 	};
 
