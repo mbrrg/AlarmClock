@@ -13,5 +13,10 @@ public class AlarmService extends WakefulIntentService {
 	@Override
 	protected void doWakefulWork(Intent intent) {
 		Log.d("AlarmService", "Sound the alarm!");
+		
+		Intent alarmIntent = new Intent(this, AlarmActivity.class);
+		alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		
+		startActivity(alarmIntent);
 	}
 }
