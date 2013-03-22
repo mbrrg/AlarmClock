@@ -31,6 +31,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 		PendingIntent pi = PendingIntent.getBroadcast(context, 1, alarmIntent, 0);
 		
 		manager.cancel(pi);		
-		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 15000, pi);
+		//manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 15000, pi);
 	}
 }

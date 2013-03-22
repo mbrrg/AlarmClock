@@ -1,6 +1,7 @@
 package com.plushware.alarmclock;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -9,7 +10,7 @@ import android.view.View;
 public class ClockActivity extends Activity {
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;	
 		
-	private TimeTextView mTimeView;		
+	private TimeTextView mTimeView;
 	
 	@Override
 	protected void onPause() {
@@ -47,6 +48,8 @@ public class ClockActivity extends Activity {
 		});
 		
 		findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+		
+		startService(new Intent(this, SensorInputService.class));
 	}
 
 	@Override

@@ -50,10 +50,16 @@
 
         <activity
             android:name="com.plushware.alarmclock.AlarmActivity"
-            android:label="@string/title_activity_alarm" 
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_alarm"
             android:theme="@style/FullscreenTheme" >
         </activity>
+
+        <service
+            android:name="com.plushware.alarmclock.SensorInputService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
