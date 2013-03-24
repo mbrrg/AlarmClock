@@ -8,14 +8,14 @@ import android.widget.TextView;
 public class TimeTextView extends TextView {
 	private static final int TIME_REFRESH_MILLIS = 30 * 1000;
 	
-	private RepeatingRunner mRefreshTimeRunner;;
+	private RepeatingRunner mRefreshTimeRunner;
 	
 	private Runnable mRefreshTimeRunnable = new Runnable() {
 		public void run() {						
 			Time currentTime = new Time();        
 			currentTime.setToNow();
 			
-			setText(currentTime.format("%H:%M"));    	    	    	   
+			setText(currentTime.format("%H.%M"));    	    	    	   
 		}
 	};
 	
