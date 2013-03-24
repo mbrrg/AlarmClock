@@ -7,11 +7,13 @@
 #include <android/log.h>
 #include <stdio.h>
 #include <errno.h>
+#include <poll.h>
 
 #define  LOG_TAG    		"SensorInputNative"
 #define  LOGI(...)  		__android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGD(...)  		__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  		__android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define  LOGW(...)  		__android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 
 #define GPIO_PATH	 		"/sys/class/gpio"
 #define BUF_SIZE			256
@@ -69,7 +71,7 @@ int gpio_write_file(char *port, char *file, char *value)
 
 JNIEXPORT jint JNICALL Java_com_plushware_hardware_SensorInput_poll(JNIEnv *env, jobject obj, jstring portparam)
 {
-    char port[64];
+	char port[64];
     const jbyte *str;
     int fd, len, ret;
     struct pollfd fdset[1];
@@ -103,28 +105,41 @@ JNIEXPORT jint JNICALL Java_com_plushware_hardware_SensorInput_poll(JNIEnv *env,
 		fdset[0].fd = fd;
 		fdset[0].events = POLLPRI | POLLERR;
 
-		read(fd, buf, 1);
+		len = read(fd, buf, 1);
+
+		LOGD("Read %d bytes from file.", len);
+		LOGD("Starting poll operation, infinite timeout.");
 
 		ret = poll(fdset, 1, -1);
 
-		if (ret < 0) {
-			LOGE("Poll failed - %s.", strerror(errno));
+		if (ret > 0) {
+			LOGD("poll call completed successfully.");
 
-			return -1;
-		}
+			if (fdset[0].revents & POLLPRI) {
+				LOGD("GPIO %s interrupt!", port);
 
-		if (fdset[1].revents & POLLPRI) {
-			LOGD("GPIO %s interrupt!", port);
+				lseek(fd, 0, SEEK_SET);
+				len = read(fdset[0].fd, buf, BUF_SIZE);
 
-			lseek(fd, 0, SEEK_SET);
-			len = read(fdset[0].fd, buf, BUF_SIZE);
+				LOGD("Read %d bytes.", len);
 
-			LOGD("Read %d bytes.", len);
+				ret = 0;
+
+				break;
+			} else {
+				LOGW("No GPIO interrupt detected, weird.");
+			}
+		} else if (ret == 0) {
+			LOGE("poll call timed out, should not be possible!");
+		} else {
+			LOGE("poll call failed - %s.", strerror(errno));
+
+			break;
 		}
 	}
 
     LOGD("Closing GPIO file descriptor.");
 	close(fd);
 
-	return 0;
+	return ret;
 }
