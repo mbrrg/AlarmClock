@@ -31,7 +31,7 @@ public class UpdateSystemTimeReceiver extends BroadcastReceiver {
 			break;
 		
 		default:
-			Log.w("UpdateSystemTimeReceiver", "Invalid service specified, ignoring.");
+			Log.w("UpdateSystemTimeReceiver", "Invalid service specified (" + Integer.toString(service) + "), ignoring.");
 			break;
 		}		
 	}
