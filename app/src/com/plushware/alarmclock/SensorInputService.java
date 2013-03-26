@@ -12,7 +12,9 @@ import com.plushware.hardware.SensorInput;
 
 public class SensorInputService extends Service {
 	static final String TAG = "SensorInputService";
-	static final String PRESENCE_ACTION = "com.plushware.alarmclock.SensorInputService.PRESENCE_ACTION";
+	
+	static final String PRESENCE_SHORT = "com.plushware.alarmclock.SensorInputService.PRESENCE_SHORT";
+	static final String PRESENCE_LONG = "com.plushware.alarmclock.SensorInputService.PRESENCE_LONG";
 	
 	Thread mPollThread;
 	WakeLock mPartialWakeLock;
@@ -26,28 +28,45 @@ public class SensorInputService extends Service {
 
         public void run() {
 			Log.d(TAG, "Starting polling thread.");
-			
-			SensorInput test = new SensorInput();
 		
 			while (!Thread.currentThread().isInterrupted()) {
-				int result = test.poll("1_pb4");
+				int result = SensorInput.poll();
 				
 				if (result != -1) {					
-					Log.d(TAG, "Got interrupt.");
+					Log.d(TAG, "Got interrupt, broadcasting intent.");
 					
-					Intent intent = new Intent();
+					mContext.sendBroadcast(new Intent(PRESENCE_SHORT));
 					
-					intent.setAction(PRESENCE_ACTION);
-									
-					mContext.sendBroadcast(intent);
-				}
-				
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-					break;
-				}
+					Boolean longPresence = true;
+					
+					for (int i = 0; i < 30; i++) {
+						if (SensorInput.getValue() == 0) {
+							longPresence = false;
+							break;
+						}
+						
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+							break;
+						}											
+					}
+					
+					if (longPresence) {
+						Log.d(TAG, "Got long presence, broadcasting intent.");
+						mContext.sendBroadcast(new Intent(PRESENCE_LONG));
+					}
+				} else {
+					Log.d(TAG, "Polling failed, will delay and try again.");
+					
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}				
+				}					
 			}
 				
 			Log.d(TAG, "Exiting polling thread.");
@@ -78,11 +97,20 @@ public class SensorInputService extends Service {
 		}
 	}
 	
+	private void initializeSensor() {
+		if (SensorInput.setThreshold(22500) >= 0) {
+			Log.d(TAG, "Succeeded in setting sensor threshold.");			
+		} else {
+			Log.e(TAG, "Failed to set sensor threshold.");
+		}	
+	}
+	
 	@Override
 	public void onCreate() {
 		Log.d(TAG, "onCreate");
 		
 		createPartialWakeLock();
+		initializeSensor();
 		
 		mPollThread = new Thread(new PollSensorRunnable(this));
 		mPollThread.start();
