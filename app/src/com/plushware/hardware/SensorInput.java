@@ -1,7 +1,11 @@
 package com.plushware.hardware;
 
 public class SensorInput {
-	public native int poll(String param);
+	public static native int getThreshold();
+	public static native int setThreshold(int threshold);
+	public static native int getValue();
+	public static native int getRawValue();
+	public static native int poll();
 	
 	 static {
 	        System.loadLibrary("sensorinput");
