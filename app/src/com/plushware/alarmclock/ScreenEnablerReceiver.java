@@ -14,7 +14,7 @@ public class ScreenEnablerReceiver extends BroadcastReceiver {
 		@Override
 		protected Void doInBackground(Context... context) {
 			PowerManager pm = (PowerManager)context[0].getSystemService(Context.POWER_SERVICE);
-			PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "EnableScreenTask");
+			PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "EnableScreenTask");
 			
 			Log.d(TAG, "About to acquire wake lock.");
 			
