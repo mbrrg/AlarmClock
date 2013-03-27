@@ -31,7 +31,8 @@
             </intent-filter>
         </activity>
 
-        <!-- receiver
+        <!--
+        receiver
             android:name="com.plushware.alarmclock.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true" >
@@ -46,7 +47,8 @@
         </receiver>
 
         <service android:name="com.plushware.alarmclock.EnableWifiService" />
-        <service android:name="com.plushware.alarmclock.AlarmService" / -->
+        <service android:name="com.plushware.alarmclock.AlarmService" /
+        -->
 
         <activity
             android:name="com.plushware.alarmclock.AlarmActivity"
@@ -66,7 +68,7 @@
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
-                <action android:name="com.plushware.alarmclock.SensorInputService.PRESENCE_ACTION" />               
+                <action android:name="com.plushware.alarmclock.SensorInputService.PRESENCE_SHORT" />
             </intent-filter>
         </receiver>
     </application>
