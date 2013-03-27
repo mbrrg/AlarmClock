@@ -15,6 +15,7 @@ public class SensorInputService extends Service {
 	
 	static final String PRESENCE_SHORT = "com.plushware.alarmclock.SensorInputService.PRESENCE_SHORT";
 	static final String PRESENCE_LONG = "com.plushware.alarmclock.SensorInputService.PRESENCE_LONG";
+	static final int PRESENCE_LONG_COOLDOWN = 3000;	
 	
 	Thread mPollThread;
 	WakeLock mPartialWakeLock;
@@ -41,7 +42,9 @@ public class SensorInputService extends Service {
 					
 					for (int i = 0; i < 30; i++) {
 						if (SensorInput.getValue() == 0) {
+							Log.d(TAG, "Long presence aborted after " + Integer.toString(i) + " samples.");							
 							longPresence = false;
+							
 							break;
 						}
 						
@@ -56,6 +59,13 @@ public class SensorInputService extends Service {
 					if (longPresence) {
 						Log.d(TAG, "Got long presence, broadcasting intent.");
 						mContext.sendBroadcast(new Intent(PRESENCE_LONG));
+						
+						try {
+							Thread.sleep(PRESENCE_LONG_COOLDOWN);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+							break;
+						}											
 					}
 				} else {
 					Log.d(TAG, "Polling failed, will delay and try again.");
@@ -67,8 +77,8 @@ public class SensorInputService extends Service {
 						break;
 					}				
 				}					
-			}
-				
+			}			
+			
 			Log.d(TAG, "Exiting polling thread.");
         }
     }	
@@ -98,6 +108,8 @@ public class SensorInputService extends Service {
 	}
 	
 	private void initializeSensor() {
+		SensorInput.init();
+		
 		if (SensorInput.setThreshold(22500) >= 0) {
 			Log.d(TAG, "Succeeded in setting sensor threshold.");			
 		} else {
@@ -127,7 +139,7 @@ public class SensorInputService extends Service {
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy, sending interrupt to poll thread");
 		
-		releasePartialWakeLock();
+		releasePartialWakeLock();			
 		
 		mPollThread.interrupt();
 	}
