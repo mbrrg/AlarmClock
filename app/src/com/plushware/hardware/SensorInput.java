@@ -6,6 +6,7 @@ public class SensorInput {
 	public static native int getValue();
 	public static native int getRawValue();
 	public static native int poll();
+	public static native int init();
 	
 	 static {
 	        System.loadLibrary("sensorinput");
