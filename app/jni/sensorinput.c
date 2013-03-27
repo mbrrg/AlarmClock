@@ -17,7 +17,7 @@
 #define GPIO_PATH	 		"/sys/class/gpio/gpio1_pb4/"
 #define I2C_PATH			"/sys/bus/i2c/devices/2-0048/device0/"
 
-int open_file(char *path, int write)
+static int open_file(char *path, int write)
 {
 	int fd;
 	int mode;
@@ -42,7 +42,7 @@ int open_file(char *path, int write)
 	return fd;
 }
 
-int write_file(char *filename, char *value)
+static int write_file(char *filename, char *value)
 {
 	int fd;
 
@@ -62,7 +62,7 @@ int write_file(char *filename, char *value)
 	return fd;
 }
 
-int read_file(char *path)
+static int read_file(char *path)
 {
 	int fd, ret, len;
 	char buf[32];
