@@ -111,14 +111,19 @@ JNIEXPORT jint Java_com_plushware_hardware_SensorInput_getRawValue(JNIEnv *env, 
 	return read_file(I2C_PATH "ch1_value");
 }
 
+JNIEXPORT jint JNICALL Java_com_plushware_hardware_SensorInput_init(JNIEnv *env, jobject obj)
+{
+    write_file(GPIO_PATH "direction", "in");
+    write_file(GPIO_PATH "edge", "rising");
+
+    return 0;
+}
+
 JNIEXPORT jint JNICALL Java_com_plushware_hardware_SensorInput_poll(JNIEnv *env, jobject obj)
 {
     int fd, len, ret;
     struct pollfd fdset[1];
     char buf[32];
-
-    write_file(GPIO_PATH "direction", "in");
-    write_file(GPIO_PATH "edge", "rising");
 
     fd = open_file(GPIO_PATH "value", 0);
 
