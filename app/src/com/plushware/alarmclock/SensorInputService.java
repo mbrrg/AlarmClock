@@ -110,7 +110,9 @@ public class SensorInputService extends Service {
 	private void initializeSensor() {
 		SensorInput.init();
 		
-		if (SensorInput.setThreshold(22500) >= 0) {
+		Settings settings = new Settings(this);
+		
+		if (SensorInput.setThreshold(settings.sensorThreshold) >= 0) {
 			Log.d(TAG, "Succeeded in setting sensor threshold.");			
 		} else {
 			Log.e(TAG, "Failed to set sensor threshold.");
