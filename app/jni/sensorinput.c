@@ -9,8 +9,14 @@
 #include <errno.h>
 #include <poll.h>
 
+//#define SENSOR_INPUT_DEBUG
+
 #define  LOG_TAG    		"SensorInputNative"
+#ifdef SENSOR_INPUT_DEBUG
 #define  LOGD(...)  		__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+#else
+#define	 LOGD(...)
+#endif
 #define  LOGE(...)  		__android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  		__android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 
