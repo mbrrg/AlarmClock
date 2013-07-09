@@ -1,8 +1,11 @@
 package com.plushware.alarmclock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
@@ -12,6 +15,32 @@ public class EnableWifiService extends WakefulIntentService {
 	
 	public EnableWifiService() {
 		super("EnableWifiService");
+	}
+	
+	private static PendingIntent createTriggerIntent(Context context)
+	{
+		Intent updateTimeIntent = new Intent(context, BroadcastDispatcher.class);		
+		updateTimeIntent.putExtra("Service", BroadcastDispatcher.SERVICE_WIFI);				
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateTimeIntent, 0);		
+		
+		return pendingIntent;
+	}
+	
+	public static void disableTrigger(Context context)
+	{
+		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);		
+		
+		manager.cancel(createTriggerIntent(context));		
+	}
+	
+	public static void enableTrigger(Context context)
+	{
+		disableTrigger(context);
+		
+		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);		
+		
+		manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 
+				AlarmManager.INTERVAL_HALF_DAY, createTriggerIntent(context));								
 	}
 
 	@Override

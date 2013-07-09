@@ -63,7 +63,7 @@ public class ClockActivity extends Activity {
 		//Intent intent = new Intent(this, SettingsActivity.class);
 		//startActivity(intent);
 		
-		AlarmTrigger.enable(this);
+		AlarmService.enableTrigger(this);
 	}
 
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {

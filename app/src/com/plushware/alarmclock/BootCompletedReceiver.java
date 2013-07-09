@@ -18,16 +18,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Log.i("BootCompletedReceiver", "Boot completed.");
 		
-		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-		
-		Intent updateTimeIntent = new Intent(context, BroadcastDispatcher.class);		
-		updateTimeIntent.putExtra("Service", BroadcastDispatcher.SERVICE_WIFI);				
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateTimeIntent, 0);
-		
-		manager.cancel(pendingIntent);
-		manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 
-				AlarmManager.INTERVAL_HALF_DAY, pendingIntent);		
-
-		AlarmTrigger.enable(context);
+		EnableWifiService.enableTrigger(context);
+		AlarmService.enableTrigger(context);
 	}
 }

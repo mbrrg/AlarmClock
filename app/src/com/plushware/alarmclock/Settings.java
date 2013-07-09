@@ -24,8 +24,8 @@ public class Settings {
 
 	private void load() {
 		sensorThreshold = (int)mPreferences.getLong(KEY_SENSOR_THRESHOLD, 22500);
-		alarmHour = (int)mPreferences.getLong(KEY_ALARM_HOUR, 21);
-		alarmMinute = (int)mPreferences.getLong(KEY_ALARM_MINUTE, 54);
+		alarmHour = (int)mPreferences.getLong(KEY_ALARM_HOUR, 22);
+		alarmMinute = (int)mPreferences.getLong(KEY_ALARM_MINUTE, 48);
 	}	
 	
 	public void save() {
