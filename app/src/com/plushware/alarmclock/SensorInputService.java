@@ -123,11 +123,13 @@ public class SensorInputService extends Service {
 	public void onCreate() {
 		Log.d(TAG, "onCreate");
 		
-		createPartialWakeLock();
-		initializeSensor();
+		if (SensorInput.isEnabled()) {		
+			createPartialWakeLock();
+			initializeSensor();
 		
-		mPollThread = new Thread(new PollSensorRunnable(this));
-		mPollThread.start();
+			mPollThread = new Thread(new PollSensorRunnable(this));
+			mPollThread.start();
+		}
 	}
 
 	@Override
