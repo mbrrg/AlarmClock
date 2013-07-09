@@ -1,5 +1,7 @@
 package com.plushware.alarmclock;
 
+import java.util.Date;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -25,12 +27,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 		manager.cancel(pendingIntent);
 		manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 
 				AlarmManager.INTERVAL_HALF_DAY, pendingIntent);		
-		
-		Intent alarmIntent = new Intent(context, UpdateSystemTimeReceiver.class);
-		alarmIntent.putExtra("Service", UpdateSystemTimeReceiver.SERVICE_ALARM);
-		PendingIntent pi = PendingIntent.getBroadcast(context, 1, alarmIntent, 0);
-		
-		manager.cancel(pi);		
-		//manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 15000, pi);
+
+		AlarmTrigger.enable(context);
 	}
 }

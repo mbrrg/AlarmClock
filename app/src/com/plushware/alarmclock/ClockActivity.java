@@ -58,6 +58,13 @@ public class ClockActivity extends Activity {
 
 		//delayedHide(100);
 	}
+	
+	public void openSettings(View view) {
+		//Intent intent = new Intent(this, SettingsActivity.class);
+		//startActivity(intent);
+		
+		AlarmTrigger.enable(this);
+	}
 
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override

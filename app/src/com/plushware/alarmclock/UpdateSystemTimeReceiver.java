@@ -27,7 +27,7 @@ public class UpdateSystemTimeReceiver extends BroadcastReceiver {
 			
 		case SERVICE_ALARM:
 			Log.d("UpdateSystemTimeReceiver", "Invoking AlarmService.");
-			WakefulIntentService.sendWakefulWork(context, AlarmService.class);
+			//WakefulIntentService.sendWakefulWork(context, AlarmService.class);
 			break;
 		
 		default:
