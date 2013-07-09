@@ -9,8 +9,8 @@ import android.os.SystemClock;
 
 public class AlarmTrigger {
 	private static PendingIntent createIntent(Context context) {	
-		Intent alarmIntent = new Intent(context, UpdateSystemTimeReceiver.class);
-		alarmIntent.putExtra("Service", UpdateSystemTimeReceiver.SERVICE_ALARM);
+		Intent alarmIntent = new Intent(context, BroadcastDispatcher.class);
+		alarmIntent.putExtra("Service", BroadcastDispatcher.SERVICE_ALARM);
 		PendingIntent pi = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
 	
 		return pi;

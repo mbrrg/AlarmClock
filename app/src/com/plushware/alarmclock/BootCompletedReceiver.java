@@ -20,8 +20,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 		
 		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 		
-		Intent updateTimeIntent = new Intent(context, UpdateSystemTimeReceiver.class);		
-		updateTimeIntent.putExtra("Service", UpdateSystemTimeReceiver.SERVICE_WIFI);				
+		Intent updateTimeIntent = new Intent(context, BroadcastDispatcher.class);		
+		updateTimeIntent.putExtra("Service", BroadcastDispatcher.SERVICE_WIFI);				
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateTimeIntent, 0);
 		
 		manager.cancel(pendingIntent);

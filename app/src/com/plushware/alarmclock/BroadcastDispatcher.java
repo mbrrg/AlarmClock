@@ -7,12 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class UpdateSystemTimeReceiver extends BroadcastReceiver {
+public class BroadcastDispatcher extends BroadcastReceiver {
+	public static final String TAG = "BroadcastDispatcher";
 	public static final int SERVICE_UNKNOWN = 0;
 	public static final int SERVICE_WIFI = 1;
 	public static final int SERVICE_ALARM = 2;
 	
-	public UpdateSystemTimeReceiver() {
+	public BroadcastDispatcher() {
 	}
 
 	@Override
@@ -21,17 +22,17 @@ public class UpdateSystemTimeReceiver extends BroadcastReceiver {
 			
 		switch (service) {
 		case SERVICE_WIFI:
-			Log.d("UpdateSystemTimeReceiver", "Invoking EnableWifiService.");
+			Log.d(TAG, "Invoking EnableWifiService.");
 			WakefulIntentService.sendWakefulWork(context, EnableWifiService.class);
 			break;
 			
 		case SERVICE_ALARM:
-			Log.d("UpdateSystemTimeReceiver", "Invoking AlarmService.");
+			Log.d(TAG, "Invoking AlarmService.");
 			//WakefulIntentService.sendWakefulWork(context, AlarmService.class);
 			break;
 		
 		default:
-			Log.w("UpdateSystemTimeReceiver", "Invalid service specified (" + Integer.toString(service) + "), ignoring.");
+			Log.w(TAG, "Invalid service specified (" + Integer.toString(service) + "), ignoring.");
 			break;
 		}		
 	}
