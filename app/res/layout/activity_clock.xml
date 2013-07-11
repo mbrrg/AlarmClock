@@ -85,6 +85,15 @@
                 android:layout_weight="1"
                 android:text="@string/set_alarms_button" 
                 android:onClick="openSettings"/>
+            
+			<Button
+                android:id="@+id/alarm_off"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Alarm off" 
+                android:onClick="alarmOff"/>            
         </LinearLayout>
 
         <Space
