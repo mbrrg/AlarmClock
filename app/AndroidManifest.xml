@@ -40,36 +40,34 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.plushware.alarmclock.BroadcastDispatcher"
+            android:name="com.plushware.alarmclock.WakeupReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false" >                
         </receiver>
-
-        <!--  service android:name="com.plushware.alarmclock.EnableWifiService" />
-        <service android:name="com.plushware.alarmclock.AlarmService" /
-        -->
-
-        <activity
-            android:name="com.plushware.alarmclock.AlarmActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_alarm"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
-
         <service
             android:name="com.plushware.alarmclock.SensorInputService"
             android:enabled="true"
             android:exported="false" >
         </service>
-
         <receiver
             android:name="com.plushware.alarmclock.ScreenEnablerReceiver"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
-                <action android:name="com.plushware.alarmclock.SensorInputService.PRESENCE_SHORT" />
+                <action android:name="com.plushware.alarmclock.SCREEN_ON_OFF" />
+                <action android:name="com.plushware.alarmclock.SCREEN_ON" />
+                <action android:name="com.plushware.alarmclock.SCREEN_OFF" />
+          	</intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.plushware.alarmclock.SensorInputReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.plushware.alarmclock.SENSOR_HIT_SHORT" />
+                <action android:name="com.plushware.alarmclock.SENSOR_HIT_LONG" />
             </intent-filter>
-        </receiver>       
+        </receiver>        
     </application>
 
 </manifest>
