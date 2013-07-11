@@ -13,8 +13,6 @@ import com.plushware.hardware.SensorInput;
 public class SensorInputService extends Service {
 	static final String TAG = "SensorInputService";
 	
-	static final String PRESENCE_SHORT = "com.plushware.alarmclock.SensorInputService.PRESENCE_SHORT";
-	static final String PRESENCE_LONG = "com.plushware.alarmclock.SensorInputService.PRESENCE_LONG";
 	static final int PRESENCE_LONG_COOLDOWN = 3000;	
 	
 	Thread mPollThread;
@@ -36,7 +34,7 @@ public class SensorInputService extends Service {
 				if (result != -1) {					
 					Log.d(TAG, "Got interrupt, broadcasting intent.");
 					
-					mContext.sendBroadcast(new Intent(PRESENCE_SHORT));
+					mContext.sendBroadcast(new Intent(AlarmClock.INTENT_SENSOR_HIT_SHORT));
 					
 					Boolean longPresence = true;
 					
@@ -58,7 +56,7 @@ public class SensorInputService extends Service {
 					
 					if (longPresence) {
 						Log.d(TAG, "Got long presence, broadcasting intent.");
-						mContext.sendBroadcast(new Intent(PRESENCE_LONG));
+						mContext.sendBroadcast(new Intent(AlarmClock.INTENT_SENSOR_HIT_LONG));
 						
 						try {
 							Thread.sleep(PRESENCE_LONG_COOLDOWN);
