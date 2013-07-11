@@ -18,7 +18,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Log.i("BootCompletedReceiver", "Boot completed.");
 		
-		EnableWifiService.enableTrigger(context);
-		AlarmService.enableTrigger(context);
+		AlarmTrigger.enable(context);
 	}
 }
