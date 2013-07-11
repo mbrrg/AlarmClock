@@ -8,27 +8,44 @@ import android.os.PowerManager;
 import android.util.Log;
 
 public class ScreenEnablerReceiver extends BroadcastReceiver {
-	private class EnableScreenTask extends AsyncTask<Context, Void, Void> {
-		final static String TAG = "EnableScreenTask";
+	private static Thread mCancelThread;
+	private static Object mSync = new Object();
+	
+	private class TaskParams {
+		public Context context;
+		public Boolean sleepIndefinitely;
 		
+		public TaskParams(Context c, Boolean s) {
+			context = c;
+			sleepIndefinitely = s;
+		}
+	}
+	
+	private class EnableScreenTask extends AsyncTask<TaskParams, Void, Void> {		
 		@Override
-		protected Void doInBackground(Context... context) {
-			PowerManager pm = (PowerManager)context[0].getSystemService(Context.POWER_SERVICE);
+		protected Void doInBackground(TaskParams... params) {
+			synchronized (mSync) {
+				mCancelThread = Thread.currentThread();
+			}
+			
+			PowerManager pm = (PowerManager)params[0].context.getSystemService(Context.POWER_SERVICE);
 			PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "EnableScreenTask");
 			
-			Log.d(TAG, "About to acquire wake lock.");
-			
+			Log.d("EnableScreenTask", "Acquiring full wake lock.");
+					
 			wl.acquire();
 			
-			if (wl.isHeld()) {
-				Log.d(TAG, "Full wake lock aquired.");
-			}
-			else {
-				Log.w(TAG, "Failed to acquire full wake lock.");
-			}
-			
 			try {
-				Thread.sleep(10000);
+				if (params[0].sleepIndefinitely) {
+					while (true) {
+						Thread.sleep(500);
+					}
+				}
+				else {
+					Settings s = new Settings(params[0].context);
+					
+					Thread.sleep(s.screenWakeTime * 1000);			
+				}
 			} catch (InterruptedException e) {
 				;
 			}
@@ -36,21 +53,34 @@ public class ScreenEnablerReceiver extends BroadcastReceiver {
 				wl.release();
 			}
 			
-			Log.d(TAG, "Full wake lock released.");
+			synchronized (mSync) {
+				mCancelThread = null;
+			}
+			
+			Log.d("EnableScreenTask", "Full wake lock released.");		
 			
 			return null;
 		}
-	
-	}
-	
-	
-	public ScreenEnablerReceiver() {
 	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.d("ScreenEnablerReceiver", "onReceive");
+
+		String action = intent.getAction();
 		
-		new EnableScreenTask().execute(context);
+		if (action == AlarmClock.INTENT_SCREEN_ON) {
+			new EnableScreenTask().execute(new TaskParams(context, true));
+		} else if (action == AlarmClock.INTENT_SCREEN_OFF) {
+			synchronized (mSync) {			
+				if (mCancelThread != null) {
+					mCancelThread.interrupt();
+				}
+			}
+		} else if (action == AlarmClock.INTENT_SCREEN_ON_OFF) {	
+			new EnableScreenTask().execute(new TaskParams(context, false));
+		} else {
+			assert false;
+		}
 	}
 }

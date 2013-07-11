@@ -1,20 +1,52 @@
 package com.plushware.alarmclock;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class ClockActivity extends Activity {
-	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;	
-		
+	public static final String TAG = "ClockActivity";
+	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;		
+	
+	private MediaPlayer mPlayer;
 	private TimeTextView mTimeView;
+	private AlarmReceiver mAlarmReceiver;
+	private Boolean mReceiverIsRegistered = false;
+	
+	private class AlarmReceiver extends BroadcastReceiver {     
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Received alarm on broadcast.");
+			
+			mTimeView.setTextColor(Color.RED);
+
+			if (mPlayer == null) {
+				mPlayer = MediaPlayer.create(context, R.raw.alarm);
+				mPlayer.setLooping(true);
+			}
+			
+	        mPlayer.seekTo(0);
+			mPlayer.start();				
+		}
+	}	
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		
+		if (mReceiverIsRegistered) {
+		    unregisterReceiver(mAlarmReceiver);
+		    mReceiverIsRegistered = false;
+		}		
 		
 		mTimeView.pause();
 	}
@@ -23,7 +55,27 @@ public class ClockActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
+		if (!mReceiverIsRegistered) {
+		    registerReceiver(mAlarmReceiver, new IntentFilter(AlarmClock.INTENT_ALARM_ON));
+		    mReceiverIsRegistered = true;
+		}
+		
+		Intent i = getIntent();
+		
+		if (i.getBooleanExtra("ALARM_IS_ON",  false)) {	
+			mTimeView.setTextColor(Color.GREEN);
+		}
+		
 		mTimeView.resume();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		if (mPlayer != null && mPlayer.isPlaying()) {
+			mPlayer.stop();
+		}
 	}
 
 	@Override
@@ -49,6 +101,8 @@ public class ClockActivity extends Activity {
 		
 		findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 		
+		mAlarmReceiver = new AlarmReceiver();
+		
 		startService(new Intent(this, SensorInputService.class));
 	}
 
@@ -63,7 +117,12 @@ public class ClockActivity extends Activity {
 		//Intent intent = new Intent(this, SettingsActivity.class);
 		//startActivity(intent);
 		
-		AlarmService.enableTrigger(this);
+		AlarmTrigger.enable(this);
+	}
+	
+	public void alarmOff(View view) {		
+		Intent intent = new Intent(AlarmClock.INTENT_ALARM_OFF);
+		sendBroadcast(intent);
 	}
 
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
