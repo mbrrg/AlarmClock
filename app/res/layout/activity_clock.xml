@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="4dp"
     android:background="#0099cc"
     tools:context=".ClockActivity" >
 
@@ -28,39 +29,6 @@
          android:fitsSystemWindows.
     -->
 
-    <LinearLayout
-        android:id="@+id/status_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top"
-        android:contentDescription="Status icons"
-        android:gravity="top|right"
-        android:orientation="horizontal"
-        android:paddingBottom="3dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="5dp"
-        android:paddingTop="3dp" >
-
-        <ImageView
-            android:id="@+id/status_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:adjustViewBounds="true"
-            android:src="@drawable/alarm_clock_small" />
-
-        <Space
-            android:layout_width="5dp"
-            android:layout_height="match_parent" />
-
-        <ImageView
-            android:id="@+id/status_wifi"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:src="@drawable/wifi" />
-
-    </LinearLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -78,13 +46,13 @@
             tools:ignore="UselessParent" >
 
             <Button
-                android:id="@+id/dummy_button"
+                android:id="@+id/set_alarm"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/set_alarms_button" 
-                android:onClick="openSettings"/>
+                android:onClick="setAlarm"/>
             
 			<Button
                 android:id="@+id/alarm_off"
@@ -93,12 +61,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Alarm off" 
-                android:onClick="alarmOff"/>            
+                android:onClick="alarmOff"/>      
+                
+			<Button
+                android:id="@+id/show_settings"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Settings" 
+                android:onClick="showSettings"/>      
+            
+			
         </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/sensor_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffffff" />
 
     </FrameLayout>
 

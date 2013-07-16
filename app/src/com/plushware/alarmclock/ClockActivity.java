@@ -1,5 +1,7 @@
 package com.plushware.alarmclock;
 
+import com.plushware.hardware.SensorInput;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,35 +11,66 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 public class ClockActivity extends Activity {
 	public static final String TAG = "ClockActivity";
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;		
 	
 	private MediaPlayer mPlayer;
+	private TextView mSensorValue;
 	private TimeTextView mTimeView;
 	private AlarmReceiver mAlarmReceiver;
 	private Boolean mReceiverIsRegistered = false;
 	
+	private Runnable mRefreshSensorValueRunnable = new Runnable() {
+		public void run() {
+			if (mSensorValue != null && SensorInput.isEnabled()) {
+				mSensorValue.setText(Integer.toString(SensorInput.getRawValue()));
+			}
+		}
+	};
+	
+	private RepeatingRunner mRefreshSensorValue = new RepeatingRunner(mRefreshSensorValueRunnable, 500);	
+	
 	private class AlarmReceiver extends BroadcastReceiver {     
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Received alarm on broadcast.");
+			String action = intent.getAction();
 			
-			mTimeView.setTextColor(Color.RED);
-
-			if (mPlayer == null) {
-				mPlayer = MediaPlayer.create(context, R.raw.alarm);
-				mPlayer.setLooping(true);
+			Log.d(TAG, "Received " + action);
+			
+			if (action == AlarmClock.INTENT_ALARM_ON) {
+				alarmOn();
+			} else if (action == AlarmClock.INTENT_ALARM_OFF) {
+				alarmOff();			 
 			}
-			
-	        mPlayer.seekTo(0);
-			mPlayer.start();				
 		}
-	}	
+	}
+	
+	protected void alarmOn() {
+		mTimeView.setTextColor(Color.RED);
+
+		if (mPlayer == null) {
+			mPlayer = MediaPlayer.create(this, R.raw.alarm);
+			mPlayer.setLooping(true);
+		}
+		
+        mPlayer.seekTo(0);
+		mPlayer.start();
+	}
+	
+	protected void alarmOff() {
+		mTimeView.setTextColor(Color.WHITE);
+		
+		if (mPlayer != null) {
+			mPlayer.stop();
+		}
+	}
 	
 	@Override
 	protected void onPause() {
@@ -56,14 +89,19 @@ public class ClockActivity extends Activity {
 		super.onResume();
 		
 		if (!mReceiverIsRegistered) {
-		    registerReceiver(mAlarmReceiver, new IntentFilter(AlarmClock.INTENT_ALARM_ON));
+			IntentFilter filter = new IntentFilter();
+			
+			filter.addAction(AlarmClock.INTENT_ALARM_ON);
+			filter.addAction(AlarmClock.INTENT_ALARM_OFF);
+			
+		    registerReceiver(mAlarmReceiver, filter);
 		    mReceiverIsRegistered = true;
 		}
 		
 		Intent i = getIntent();
 		
 		if (i.getBooleanExtra("ALARM_IS_ON",  false)) {	
-			mTimeView.setTextColor(Color.GREEN);
+			alarmOn();
 		}
 		
 		mTimeView.resume();
@@ -85,6 +123,7 @@ public class ClockActivity extends Activity {
 		setContentView(R.layout.activity_clock);
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
+		mSensorValue = (TextView)findViewById(R.id.sensor_value);
 		mTimeView = (TimeTextView) findViewById(R.id.fullscreen_content);
 		
 		mTimeView.setOnTouchListener(new View.OnTouchListener() {
@@ -99,7 +138,7 @@ public class ClockActivity extends Activity {
 			}
 		});
 		
-		findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+		findViewById(R.id.set_alarm).setOnTouchListener(mDelayHideTouchListener);
 		
 		mAlarmReceiver = new AlarmReceiver();
 		
@@ -113,12 +152,14 @@ public class ClockActivity extends Activity {
 		//delayedHide(100);
 	}
 	
-	public void openSettings(View view) {
-		//Intent intent = new Intent(this, SettingsActivity.class);
-		//startActivity(intent);
-		
-		AlarmTrigger.enable(this);
-	}
+	public void setAlarm(View view) {		
+		AlarmTrigger.enable();
+	}	
+	
+	public void showSettings(View view) {
+		Intent intent = new Intent(this, SettingsActivity.class);
+		startActivityForResult(intent, 0); 		
+	}	
 	
 	public void alarmOff(View view) {		
 		Intent intent = new Intent(AlarmClock.INTENT_ALARM_OFF);
