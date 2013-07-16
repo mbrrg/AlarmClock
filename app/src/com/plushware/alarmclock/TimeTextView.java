@@ -3,9 +3,8 @@ package com.plushware.alarmclock;
 import android.content.Context;
 import android.text.format.Time;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class TimeTextView extends TextView {
+public class TimeTextView extends AutoResizeTextView {
 	private static final int TIME_REFRESH_MILLIS = 30 * 1000;
 	
 	private RepeatingRunner mRefreshTimeRunner;
