@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Alarm" >
+        <SwitchPreference
+            android:key="pref_alarm_enabled"
+            android:summary=""
+            android:defaultValue="false"
+            android:title="Enable alarm" />
+
+        <com.plushware.alarmclock.TimePreference
+            android:dependency="pref_alarm_enabled"
+            android:key="pref_alarm_time"
+            android:defaultValue="08:00"
+            android:title="Alarm time" />
+
+        <ListPreference
+            android:entries="@array/alarmRingtones"
+            android:entryValues="@array/alarmRingtoneValues"
+            android:key="pref_alarm_ringtone"
+            android:summary=""
+            android:title="Ring tone" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
