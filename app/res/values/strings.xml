@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string-array name="alarmRingtones">
+        <item name="stimpadej">Stimpadej</item>
+    </string-array>
+    
+    <string-array name="alarmRingtoneValues">
+        <item name="stimpadej">stimpadej</item>
+    </string-array>
+    
     <string name="app_name">Alarm Clock</string>
     <string name="set_alarms_button">Set Alarms</string>
     <string name="hello_world">Hello world!</string>
